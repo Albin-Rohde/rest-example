@@ -1,6 +1,6 @@
 import { Author } from './entity/Author';
 import { Repository } from 'typeorm';
-import type { AuthorResponse, CreateAuthorInput, GetAuthorInput } from './types';
+import type { AuthorResponse, AuthorWithBookResponse, CreateAuthorInput, GetAuthorInput } from './types';
 import { db } from '../../data-source';
 import { NotFoundError, ValidationError } from '../../error/errors';
 
@@ -21,8 +21,8 @@ export class AuthorService {
     return this.authorRepository.save(author);
   }
 
-  public async getById(id: GetAuthorInput['id']): Promise<Author> {
-    const author = await this.authorRepository.findOne({ where: { id } })
+  public async getById(id: GetAuthorInput['id'], withBooks = false): Promise<Author> {
+    const author = await this.authorRepository.findOne({ where: { id }, relations: withBooks ? ['books'] : [] })
     if (!author) {
       throw new NotFoundError('No author found with that id.')
     }
@@ -39,6 +39,20 @@ export class AuthorService {
       firstname: author.firstname,
       lastname: author.lastname,
       createdAt: author.createdAt.toISOString()
+    };
+  }
+
+  public getAuthorWithBookResponse(author: Author): AuthorWithBookResponse {
+    return {
+      id: author.id,
+      firstname: author.firstname,
+      lastname: author.lastname,
+      createdAt: author.createdAt.toISOString(),
+      books: author.books.map(book => ({
+        id: book.id,
+        title: book.title,
+        createdAt: book.createdAt.toISOString()
+      }))
     };
   }
 }
