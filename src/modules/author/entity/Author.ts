@@ -1,10 +1,11 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { Book } from '../../book/entity/Book';
 
 @Entity('author')
 @Unique(['firstname', 'lastname'])
@@ -20,4 +21,7 @@ export class Author {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @OneToMany(() => Book, book => book.author)
+  books!: Book[];
 }

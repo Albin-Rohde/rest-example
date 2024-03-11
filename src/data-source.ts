@@ -1,13 +1,20 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { Migration1709993402647 } from './migrations/1709993402647-migration';
+import { Migration1710172745412 } from './migrations/1710172745412-migration';
 import { Author } from './modules/author/entity/Author';
+import { Book } from './modules/book/entity/Book';
 
 dotenv.config();
 
 export const entities = [
   Author,
+  Book
 ];
+
+export const migrations = [
+  Migration1709993402647, Migration1710172745412
+]
 
 export const db = new DataSource({
   type: 'postgres',
@@ -20,5 +27,5 @@ export const db = new DataSource({
   logging: false,
   entities: entities,
   subscribers: [],
-  migrations: [Migration1709993402647],
+  migrations: migrations,
 });
