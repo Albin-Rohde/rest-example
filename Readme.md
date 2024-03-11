@@ -85,3 +85,7 @@ this saves us the time from repeating json structure in the same way for all end
 - GET /author/:id - Get Author by id
 - GET /author/all - Get all Authors
 - POST /author/ - Create Author
+- GET /author/:id/books - All books by Author
+- GET /book/:id - Get Book by id
+- GET /book/:id/details - Get Book by id and the books author
+- GET /book/all - Get all books
