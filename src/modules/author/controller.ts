@@ -1,8 +1,8 @@
 import { FastifyInstance, RouteShorthandOptions } from 'fastify';
-import { AuthorResponse, CreateAuthorInput, GetAuthorInput } from './types';
+import { AuthorResponse, AuthorWithBookResponse, CreateAuthorInput, GetAuthorInput } from './types';
 import { AuthorService } from './service';
 import { createFastifySchema } from '../../fastify/utils';
-import { authorResponse, createAuthorInput, getAuthorInput } from './schema';
+import { authorResponse, authorWithBookResponse, createAuthorInput, getAuthorInput } from './schema';
 import { Type } from '@sinclair/typebox';
 
 const authorController = async (fastify: FastifyInstance, _opts: RouteShorthandOptions) => {
@@ -30,6 +30,14 @@ const authorController = async (fastify: FastifyInstance, _opts: RouteShorthandO
     const author = await authorService.create(authorData)
     const authorResponse = authorService.getAuthorResponseFromAuthor(author)
     reply.status(201).send(authorResponse)
+  });
+
+  const booksResponse = createFastifySchema({ params: getAuthorInput, response: authorWithBookResponse, tags: [AUTHOR_TAG] })
+  fastify.get<{Params: GetAuthorInput, Reply: AuthorWithBookResponse}>('/:id/books', booksResponse, async (request, reply) => {
+    const id = request.params.id
+    const authorWithBooks = await authorService.getById(id, true)
+    const response = await authorService.getAuthorWithBookResponse(authorWithBooks)
+    reply.send(response)
   });
 }
 
